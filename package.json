@@ -1,22 +1,29 @@
 {
-  "name": "matman-core",
-  "version": "0.0.1",
-  "description": "Matman core",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/helinjiang/matman-core.git"
-  },
-  "keywords": [
-    "matman"
-  ],
-  "author": "helinjiang",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/helinjiang/matman-core/issues"
-  },
-  "homepage": "https://github.com/helinjiang/matman-core#readme"
+    "name": "matman-core",
+    "version": "0.0.1",
+    "description": "Matman core",
+    "main": "lib/index.js",
+    "scripts": {
+        "dev": "babel src -d lib -w",
+        "prepublish": "babel  src -d lib",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/helinjiang/matman-core.git"
+    },
+    "keywords": [
+        "matman"
+    ],
+    "author": "helinjiang",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/helinjiang/matman-core/issues"
+    },
+    "homepage": "https://github.com/helinjiang/matman-core#readme",
+    "devDependencies": {
+        "babel-core": "^6.26.0",
+        "babel-preset-es2015-loose": "^8.0.0",
+        "babel-preset-stage-0": "^6.24.1"
+    }
 }
