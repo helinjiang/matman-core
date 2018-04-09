@@ -49,7 +49,7 @@ function build(srcPath) {
 
 
       // 获取各个 handle_module 中 config.json 的数据
-      let handleModuleConfig = {};
+      let handleModuleConfig = null;
       let curHandleModuleName = '';
 
       if (item.isDirectory()) {
@@ -61,6 +61,7 @@ function build(srcPath) {
         let CUR_HANDLE_MODULE_CONFIG = path.join(CUR_HANDLE_MODULE_PATH, curHandleModuleName, matmanConfig.handleModuleConfigName);
 
         if (fs.existsSync(CUR_HANDLE_MODULE_CONFIG)) {
+          handleModuleConfig = `${curHandleModuleName}_config`;
           result.push(`import ${curHandleModuleName}_config from './handle_modules/${curHandleModuleName}/${matmanConfig.handleModuleConfigName}'`);
         }
       } else {
@@ -70,12 +71,14 @@ function build(srcPath) {
 
       result.push(`import ${curHandleModuleName} from './handle_modules/${curHandleModuleName}'`);
 
-      // let obj = {
-      //   name: 'error',
-      //     module: error,
-      //   config: null
-      // }
+      modules.push(`{name: '${curHandleModuleName}', module: ${curHandleModuleName}, config: ${handleModuleConfig}}`);
     });
+  }
+
+  if (modules.length) {
+    result.push(`export const handleModules = [${modules.join(',')}]`);
+  } else {
+    result.push(`export const handleModules = []`);
   }
 
   let distPath = path.resolve(srcPath, '../after');
@@ -91,7 +94,7 @@ function build(srcPath) {
   // console.log(data.code);
 
   // 把所有的文件都 babel 转义
-  // babelD(srcPath, distPath);
+  babelD(srcPath, distPath);
 }
 
 build(path.resolve(__dirname, '../demo/before'));
