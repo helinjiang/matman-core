@@ -1,0 +1,6 @@
+{
+  "name": "matman-mocker-test",
+  "description": "description_matman-mocker-test",
+  "route": "/cgi-bin/a/b/matman-mocker-test",
+  "defaultModule": "success_1"
+}
