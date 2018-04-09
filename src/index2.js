@@ -20,24 +20,23 @@ function build(srcPath) {
   console.log(srcPath, path.basename(srcPath));
 
   //===============================================================
-  // 2. 找到配置文件 config.json
+  // 1. 配置文件 config.json
   //===============================================================
-  const CUR_HANDLER_PATH = srcPath;
-  const CUR_HANDLER_CONFIG = path.join(CUR_HANDLER_PATH, matmanConfig.handlerConfigName);
+  const CUR_HANDLER_CONFIG = path.join(srcPath, matmanConfig.handlerConfigName);
 
   // 注意：handler 的 config.json 可能不存在，此时需要提示错误
   // 它是必须的，用于指导如何匹配路由规则等
   if (!fs.existsSync(CUR_HANDLER_CONFIG)) {
-    console.error(CUR_HANDLER_CONFIG + ' is not exist!');
-    return null;
+    throw new Error(CUR_HANDLER_CONFIG + ' is not exist!');
   }
 
+  // 导出 config 文件内容
   result.push(`import config from './config';`);
   result.push(`export config from './config';`);
   result.push(`export const name = config.name;`);
 
   //===============================================================
-  // 4. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json
+  // 2. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json
   //===============================================================
   const CUR_HANDLE_MODULE_PATH = path.join(srcPath, matmanConfig.handleModulesFolderName);
 
@@ -46,23 +45,19 @@ function build(srcPath) {
   if (fs.existsSync(CUR_HANDLE_MODULE_PATH)) {
     // 有 handle_modules 文件夹情况下，遍历其中的模块
     fsHandler.search.getAll(CUR_HANDLE_MODULE_PATH, { globs: ['*'] }).forEach((item) => {
-
-
       // 获取各个 handle_module 中 config.json 的数据
-      let handleModuleConfig = null;
+      let curHandleModuleConfigName = '';
       let curHandleModuleName = '';
 
       if (item.isDirectory()) {
         // 如果是文件夹，则获取文件夹名字作为模块名
         curHandleModuleName = path.basename(item.relativePath);
 
-        // 如果 handle_module 是一个目录，则需要去检查其是否存在 config.json 文件，优先使用它
-        // config.json 的作用是用于用户自定义，拥有最高的优先级
+        // 如果存在 config 文件，则设置config信息
         let CUR_HANDLE_MODULE_CONFIG = path.join(CUR_HANDLE_MODULE_PATH, curHandleModuleName, matmanConfig.handleModuleConfigName);
-
         if (fs.existsSync(CUR_HANDLE_MODULE_CONFIG)) {
-          handleModuleConfig = `${curHandleModuleName}_config`;
-          result.push(`import ${curHandleModuleName}_config from './handle_modules/${curHandleModuleName}/${matmanConfig.handleModuleConfigName}'`);
+          curHandleModuleConfigName = `${curHandleModuleName}_config`;
+          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${curHandleModuleName}/${matmanConfig.handleModuleConfigName}';`);
         }
       } else {
         // 如果是文件，则获取文件名（不含后缀）作为模块名
@@ -71,7 +66,7 @@ function build(srcPath) {
 
       result.push(`import ${curHandleModuleName} from './handle_modules/${curHandleModuleName}'`);
 
-      modules.push(`{name: '${curHandleModuleName}', module: ${curHandleModuleName}, config: ${handleModuleConfig}}`);
+      modules.push(`{name: '${curHandleModuleName}', module: ${curHandleModuleName}, config: ${curHandleModuleConfigName || null}}`);
     });
   }
 
@@ -81,6 +76,9 @@ function build(srcPath) {
     result.push(`export const handleModules = []`);
   }
 
+  //===============================================================
+  // 3. 生成新的 index.js 文件
+  //===============================================================
   let distPath = path.resolve(srcPath, '../after');
 
   // 源码文件先存储一份
@@ -93,7 +91,9 @@ function build(srcPath) {
   fse.outputFileSync(path.join(distPath, 'index2.js'), data.code);
   // console.log(data.code);
 
-  // 把所有的文件都 babel 转义
+  //===============================================================
+  // 4. 把所有的文件都 babel 转义
+  //===============================================================
   babelD(srcPath, distPath);
 }
 
