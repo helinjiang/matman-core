@@ -19,17 +19,17 @@ var _success_3 = require('./handle_modules/success_2');
 
 var _success_4 = _interopRequireDefault(_success_3);
 
-var _success_3config = require('./handle_modules/success_3config.json');
+var _config4 = require('./handle_modules/success_3/config.json');
 
-var _success_3config2 = _interopRequireDefault(_success_3config);
+var _config5 = _interopRequireDefault(_config4);
 
 var _success_5 = require('./handle_modules/success_3');
 
 var _success_6 = _interopRequireDefault(_success_5);
 
-var _success_4config = require('./handle_modules/success_4config.json');
+var _config6 = require('./handle_modules/success_4/config.json');
 
-var _success_4config2 = _interopRequireDefault(_success_4config);
+var _config7 = _interopRequireDefault(_config6);
 
 var _success_7 = require('./handle_modules/success_4');
 
@@ -40,4 +40,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var isNpm = exports.isNpm = true;
 exports.config = _config3.default;
 var name = exports.name = _config3.default.name;
-var handleModules = exports.handleModules = [{ name: 'error', module: _error2.default, config: null }, { name: 'success_1', module: _success_2.default, config: null }, { name: 'success_2', module: _success_4.default, config: null }, { name: 'success_3', module: _success_6.default, config: _success_3config2.default }, { name: 'success_4', module: _success_8.default, config: _success_4config2.default }];
+var handleModules = exports.handleModules = [{ name: 'error', module: _error2.default, config: null }, { name: 'success_1', module: _success_2.default, config: null }, { name: 'success_2', module: _success_4.default, config: null }, { name: 'success_3', module: _success_6.default, config: _config5.default }, { name: 'success_4', module: _success_8.default, config: _config7.default }];

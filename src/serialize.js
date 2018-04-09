@@ -55,7 +55,7 @@ export default function build(srcPath, distPath, options = {}) {
 
         if (fs.existsSync(path.join(HANDLE_MODULE_BASE_PATH, handleModuleRelativePath))) {
           curHandleModuleConfigName = `${curHandleModuleName}_config`;
-          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${handleModuleRelativePath}';`);
+          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${handleModuleRelativePath.replace(/\\/gi,'/')}';`);
         }
       } else {
         // 如果是文件，则获取文件名（不含后缀）作为模块名
