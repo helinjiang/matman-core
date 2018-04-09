@@ -30,7 +30,7 @@ export default function build(srcPath, distPath, options = {}) {
   // 导出 config 文件内容
   result.push(`import config from './config';`);
   result.push(`export config from './config';`);
-  result.push(`export const name = config.name;`);
+  result.push(`export const name = config.name || '${ path.basename(srcPath)}';`);
 
   //===============================================================
   // 2. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json
