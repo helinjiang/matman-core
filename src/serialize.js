@@ -1,20 +1,18 @@
+const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
-// const fse = require('fs-extra');
-const path = require('path');
-const parserUtil = require('./parser-util');
 const fsHandler = require('fs-handler');
-
 const babelD = require('babel-d');
 
-const matmanConfig = {
-  handleModulesFolderName: 'handle_modules',
-  handlerConfigName: 'config.json',
-  handleModuleConfigName: 'config.json',
-  targetField: '_m_target'
-};
-
-function build(srcPath) {
+/**
+ * 进行序列化处理，包括babel处理
+ * @param {String} srcPath 本地路径
+ * @param {Object} [options] 额外参数
+ * @param {String} [options.handlerConfigPath] handler的config.json文件，绝对路径，默认为 ${srcPath}/config.json
+ * @param {String} [options.handleModuleBasePath] handle_module的根目录，绝对路径，默认为 ${srcPath}/handle_modules
+ * @param {String} [options.handleModuleConfigRelativePath] handle_module的config.json文件，相对路径，默认为 ./config.json
+ */
+export default function build(srcPath, options = {}) {
   let result = ['export const isNpm = true;'];
 
   console.log(srcPath, path.basename(srcPath));
@@ -22,12 +20,12 @@ function build(srcPath) {
   //===============================================================
   // 1. 配置文件 config.json
   //===============================================================
-  const CUR_HANDLER_CONFIG = path.join(srcPath, matmanConfig.handlerConfigName);
+  const HANDLER_CONFIG_PATH = options.handlerConfigPath || path.join(srcPath, 'config.json');
 
   // 注意：handler 的 config.json 可能不存在，此时需要提示错误
   // 它是必须的，用于指导如何匹配路由规则等
-  if (!fs.existsSync(CUR_HANDLER_CONFIG)) {
-    throw new Error(CUR_HANDLER_CONFIG + ' is not exist!');
+  if (!fs.existsSync(HANDLER_CONFIG_PATH)) {
+    throw new Error(HANDLER_CONFIG_PATH + ' is not exist!');
   }
 
   // 导出 config 文件内容
@@ -38,13 +36,13 @@ function build(srcPath) {
   //===============================================================
   // 2. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json
   //===============================================================
-  const CUR_HANDLE_MODULE_PATH = path.join(srcPath, matmanConfig.handleModulesFolderName);
+  const HANDLE_MODULE_BASE_PATH = options.handleModuleBasePath || path.join(srcPath, 'handle_modules');
 
   let modules = [];
 
-  if (fs.existsSync(CUR_HANDLE_MODULE_PATH)) {
+  if (fs.existsSync(HANDLE_MODULE_BASE_PATH)) {
     // 有 handle_modules 文件夹情况下，遍历其中的模块
-    fsHandler.search.getAll(CUR_HANDLE_MODULE_PATH, { globs: ['*'] }).forEach((item) => {
+    fsHandler.search.getAll(HANDLE_MODULE_BASE_PATH, { globs: ['*'] }).forEach((item) => {
       // 获取各个 handle_module 中 config.json 的数据
       let curHandleModuleConfigName = '';
       let curHandleModuleName = '';
@@ -54,10 +52,11 @@ function build(srcPath) {
         curHandleModuleName = path.basename(item.relativePath);
 
         // 如果存在 config 文件，则设置config信息
-        let CUR_HANDLE_MODULE_CONFIG = path.join(CUR_HANDLE_MODULE_PATH, curHandleModuleName, matmanConfig.handleModuleConfigName);
-        if (fs.existsSync(CUR_HANDLE_MODULE_CONFIG)) {
+        let handleModuleRelativePath = path.join(curHandleModuleName, options.handleModuleConfigRelativePath || './config.json');
+
+        if (fs.existsSync(path.join(HANDLE_MODULE_BASE_PATH, handleModuleRelativePath))) {
           curHandleModuleConfigName = `${curHandleModuleName}_config`;
-          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${curHandleModuleName}/${matmanConfig.handleModuleConfigName}';`);
+          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${handleModuleRelativePath}';`);
         }
       } else {
         // 如果是文件，则获取文件名（不含后缀）作为模块名
@@ -97,4 +96,3 @@ function build(srcPath) {
   babelD(srcPath, distPath);
 }
 
-build(path.resolve(__dirname, '../demo/before'));
