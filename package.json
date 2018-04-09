@@ -27,6 +27,7 @@
         "babel-preset-stage-0": "^6.24.1"
     },
     "dependencies": {
+        "babel-d": "^0.1.4",
         "fs-extra": "^5.0.0",
         "fs-handler": "0.0.3"
     }
