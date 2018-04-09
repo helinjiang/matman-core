@@ -14,15 +14,15 @@ const matmanConfig = {
   targetField: '_m_target'
 };
 
-function build(basePath) {
+function build(srcPath) {
   let result = ['export const isNpm = true;'];
 
-  console.log(basePath, path.basename(basePath));
+  console.log(srcPath, path.basename(srcPath));
 
   //===============================================================
   // 2. 找到配置文件 config.json
   //===============================================================
-  const CUR_HANDLER_PATH = basePath;
+  const CUR_HANDLER_PATH = srcPath;
   const CUR_HANDLER_CONFIG = path.join(CUR_HANDLER_PATH, matmanConfig.handlerConfigName);
 
   // 注意：handler 的 config.json 可能不存在，此时需要提示错误
@@ -36,7 +36,7 @@ function build(basePath) {
   result.push(`export config from './config';`);
   result.push(`export const name = config.name;`);
 
-  let distPath = path.resolve(basePath, '../after');
+  let distPath = path.resolve(srcPath, '../after');
 
   // 源码文件先存储一份
   let content = result.join('\n');
@@ -47,6 +47,9 @@ function build(basePath) {
   let data = babelD.babelCompile.compileByBabel(content);
   fse.outputFileSync(path.join(distPath, 'index2.js'), data.code);
   // console.log(data.code);
+
+  // 把所有的文件都 babel 转义
+  babelD(srcPath, distPath);
 }
 
 build(path.resolve(__dirname, '../demo/before'));
