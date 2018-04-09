@@ -30,7 +30,10 @@ export default function build(srcPath, distPath, options = {}) {
   // 导出 config 文件内容
   result.push(`import config from './config';`);
   result.push(`export config from './config';`);
-  result.push(`export const name = config.name || '${ path.basename(srcPath)}';`);
+
+  // TODO 暂时强制使用文件夹名字，name属性后续再支持
+  // result.push(`export const name = config.name || '${ path.basename(srcPath)}';`);
+  result.push(`export const name = '${ path.basename(srcPath)}';`);
 
   //===============================================================
   // 2. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json

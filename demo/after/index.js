@@ -39,5 +39,5 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var isNpm = exports.isNpm = true;
 exports.config = _config3.default;
-var name = exports.name = _config3.default.name || 'before';
+var name = exports.name = 'before';
 var handleModules = exports.handleModules = [{ name: 'error', module: _error2.default, config: null }, { name: 'success_1', module: _success_2.default, config: null }, { name: 'success_2', module: _success_4.default, config: null }, { name: 'success_3', module: _success_6.default, config: _config5.default }, { name: 'success_4', module: _success_8.default, config: _config7.default }];
