@@ -1,6 +1,6 @@
 {
     "name": "matman-core",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Matman core",
     "main": "lib/index.js",
     "scripts": {
