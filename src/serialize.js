@@ -12,9 +12,12 @@ const babelD = require('babel-d');
  * @param {String} [options.handlerConfigPath] handler的config.json文件，绝对路径，默认为 ${srcPath}/config.json
  * @param {String} [options.handleModuleBasePath] handle_module的根目录，绝对路径，默认为 ${srcPath}/handle_modules
  * @param {String} [options.handleModuleConfigRelativePath] handle_module的config.json文件，相对路径，默认为 ./config.json
+ * @param {String} [options.customCode] 用户自定义的代码
  */
 export default function build(srcPath, distPath, options = {}) {
-  let result = ['export const isNpm = true;'];
+  let result = ['export const isSerialized = true;'];
+
+  result.push(`export const PATH = __dirname;`);
 
   //===============================================================
   // 1. 配置文件 config.json
@@ -58,7 +61,7 @@ export default function build(srcPath, distPath, options = {}) {
 
         if (fs.existsSync(path.join(HANDLE_MODULE_BASE_PATH, handleModuleRelativePath))) {
           curHandleModuleConfigName = `${curHandleModuleName}_config`;
-          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${handleModuleRelativePath.replace(/\\/gi,'/')}';`);
+          result.push(`import ${curHandleModuleConfigName} from './handle_modules/${handleModuleRelativePath.replace(/\\/gi, '/')}';`);
         }
       } else {
         // 如果是文件，则获取文件名（不含后缀）作为模块名
@@ -78,7 +81,14 @@ export default function build(srcPath, distPath, options = {}) {
   }
 
   //===============================================================
-  // 3. 生成新的 index.js 文件
+  // 3. 用户自定义代码
+  //===============================================================
+  if (options.customCode) {
+    result.push(options.customCode);
+  }
+
+  //===============================================================
+  // 4. 生成新的 index.js 文件
   //===============================================================
   // 源码文件先存储一份
   let content = result.join('\n');
@@ -91,7 +101,7 @@ export default function build(srcPath, distPath, options = {}) {
   // console.log(data.code);
 
   //===============================================================
-  // 4. 把所有的文件都 babel 转义
+  // 5. 把所有的文件都 babel 转义
   //===============================================================
   babelD(srcPath, distPath);
 }
