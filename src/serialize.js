@@ -13,8 +13,13 @@ const babelD = require('babel-d');
  * @param {String} [options.handleModuleBasePath] handle_module的根目录，绝对路径，默认为 ${srcPath}/handle_modules
  * @param {String} [options.handleModuleConfigRelativePath] handle_module的config.json文件，相对路径，默认为 ./config.json
  * @param {String} [options.customCode] 用户自定义的代码
+ * @param {String} [options.debug] 是否开启 debug 模式，该值为 true 时，将打印一些log日志
  */
 export default function build(srcPath, distPath, options = {}) {
+  if (options.debug) {
+    console.log('\nBegin build...', srcPath, distPath, options);
+  }
+
   let result = ['export const isSerialized = true;'];
 
   result.push(`export const PATH = __dirname;`);
@@ -27,7 +32,15 @@ export default function build(srcPath, distPath, options = {}) {
   // 注意：handler 的 config.json 可能不存在，此时需要提示错误
   // 它是必须的，用于指导如何匹配路由规则等
   if (!fs.existsSync(HANDLER_CONFIG_PATH)) {
+    if (options.debug) {
+      console.error(HANDLER_CONFIG_PATH + ' is not exist!');
+    }
+
     throw new Error(HANDLER_CONFIG_PATH + ' is not exist!');
+  }
+
+  if (options.debug) {
+    console.log('Exist HANDLER_CONFIG_PATH=' + HANDLER_CONFIG_PATH);
   }
 
   // 导出 config 文件内容
@@ -42,6 +55,10 @@ export default function build(srcPath, distPath, options = {}) {
   // 2. 获取当前的 handler 下的 handle_modules 列表，或者 index.js/index.json
   //===============================================================
   const HANDLE_MODULE_BASE_PATH = options.handleModuleBasePath || path.join(srcPath, 'handle_modules');
+
+  if (options.debug) {
+    console.log('HANDLE_MODULE_BASE_PATH=' + HANDLE_MODULE_BASE_PATH);
+  }
 
   let modules = [];
 
@@ -68,10 +85,18 @@ export default function build(srcPath, distPath, options = {}) {
         curHandleModuleName = path.basename(item.relativePath, path.extname(item.relativePath));
       }
 
+      if (options.debug) {
+        console.log('curHandleModuleName=' + curHandleModuleName + ',curHandleModuleConfigName=' + curHandleModuleConfigName);
+      }
+
       result.push(`import ${curHandleModuleName} from './handle_modules/${curHandleModuleName}'`);
 
       modules.push(`{name: '${curHandleModuleName}', module: ${curHandleModuleName}, config: ${curHandleModuleConfigName || null}}`);
     });
+  }
+
+  if (options.debug) {
+    console.log('handleModules.length=' + modules.length);
   }
 
   if (modules.length) {
@@ -95,14 +120,26 @@ export default function build(srcPath, distPath, options = {}) {
   fse.ensureDirSync(distPath);
   fse.outputFileSync(path.join(distPath, 'index.bak'), content);
 
+  if (options.debug) {
+    console.log(path.join(distPath, 'index.bak') + ' save success!');
+  }
+
   // babel 之后的文件存储一份
   let data = babelD.babelCompile.compileByBabel(content);
   fse.outputFileSync(path.join(distPath, 'index.js'), data.code);
   // console.log(data.code);
 
+  if (options.debug) {
+    console.log(path.join(distPath, 'index.js') + ' save success!');
+  }
+
   //===============================================================
   // 5. 把所有的文件都 babel 转义
   //===============================================================
   babelD(srcPath, distPath);
+
+  if (options.debug) {
+    console.log('Build end!\n');
+  }
 }
 
