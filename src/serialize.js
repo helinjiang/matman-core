@@ -136,7 +136,7 @@ export default function build(srcPath, distPath, options = {}) {
   //===============================================================
   // 5. 把所有的文件都 babel 转义
   //===============================================================
-  babelD(srcPath, distPath);
+  babelD(srcPath, distPath, { debug: options.debug });
 
   if (options.debug) {
     console.log('Build end!\n');
