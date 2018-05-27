@@ -1,34 +1,34 @@
 {
-    "name": "matman-core",
-    "version": "0.1.5",
-    "description": "Matman core",
-    "main": "lib/index.js",
-    "scripts": {
-        "dev": "babel src -d lib -w",
-        "prepublish": "babel  src -d lib",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/helinjiang/matman-core.git"
-    },
-    "keywords": [
-        "matman"
-    ],
-    "author": "helinjiang",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/helinjiang/matman-core/issues"
-    },
-    "homepage": "https://github.com/helinjiang/matman-core#readme",
-    "devDependencies": {
-        "babel-core": "^6.26.0",
-        "babel-preset-es2015-loose": "^8.0.0",
-        "babel-preset-stage-0": "^6.24.1"
-    },
-    "dependencies": {
-        "babel-d": "^0.1.5",
-        "fs-extra": "^5.0.0",
-        "fs-handler": "0.0.3"
-    }
+  "name": "matman-core",
+  "version": "1.0.0",
+  "description": "matman core lib",
+  "main": "lib/index.js",
+  "scripts": {
+    "dev": "babel src -d lib -w",
+    "prepublish": "babel  src -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matmanjs/matman-core.git"
+  },
+  "keywords": [
+    "matman"
+  ],
+  "author": "helinjiang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matmanjs/matman-core/issues"
+  },
+  "homepage": "https://github.com/matmanjs/matman-core#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015-loose": "^8.0.0",
+    "babel-preset-stage-0": "^6.24.1"
+  },
+  "dependencies": {
+    "babel-d": "^0.1.5",
+    "fs-extra": "^5.0.0",
+    "fs-handler": "0.0.3"
+  }
 }
