@@ -22,13 +22,12 @@
   },
   "homepage": "https://github.com/matmanjs/matman-core#readme",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-es2015-loose": "^8.0.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1"
   },
   "dependencies": {
-    "babel-d": "^0.1.5",
+    "babel-d": "^0.2.0",
     "fs-extra": "^5.0.0",
-    "fs-handler": "0.0.3"
+    "fs-handler": "^0.1.2"
   }
 }
